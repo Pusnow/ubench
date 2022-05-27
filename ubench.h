@@ -270,7 +270,7 @@ UBENCH_DECLARE_ADD(hist)
 {
     ubench_uint_t level;
     ++s->total;
-    level = ubench_log2(value);
+    level = ubench_log2(value + 1);
     ++s->counts[level];
 }
 
@@ -279,16 +279,21 @@ UBENCH_DECLARE_PRINT(hist, print)
 
     ubench_uint_t cum = 0;
     ubench_uint_t i = 0;
-    for (; i < UBENCH_HIST_LEVEL; ++i)
+    for (; i < UBENCH_HIST_LEVEL - 1; ++i)
     {
 #ifndef UBENCH_HIST_PRINT_ALL
         if (s->counts[i])
 #endif
-            UBENCH_PRINTF("[%s] [%llu - %llu): %llu\n", msg, ((ubench_uint_t)1) << i, ((ubench_uint_t)1) << (i + 1), cum + s->counts[i]);
+            UBENCH_PRINTF("[%s] [%llu - %llu): %llu\n", msg, ((ubench_uint_t)1 << i) - 1, ((ubench_uint_t)1 << (i + 1)) - 1, cum + s->counts[i]);
 #ifdef UBENCH_HIST_PRINT_CUM
         cum += s->counts[i];
 #endif
     }
+
+#ifndef UBENCH_HIST_PRINT_ALL
+    if (s->counts[UBENCH_HIST_LEVEL - 1])
+#endif
+        UBENCH_PRINTF("[%s] [%llu - ): %llu\n", msg, ((ubench_uint_t)1 << i) - 1, cum + s->counts[i]);
 }
 
 UBENCH_DECLARE_PRINT(hist, dump)

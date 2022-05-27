@@ -59,13 +59,13 @@ ubench_uint_t values[] = {
 };
 
 const char *exp_str =
-    "[hist-basic-test] [1048576 - 2097152): 2\n"
-    "[hist-basic-test] [2097152 - 4194304): 1\n"
-    "[hist-basic-test] [4194304 - 8388608): 5\n"
-    "[hist-basic-test] [8388608 - 16777216): 6\n"
-    "[hist-basic-test] [16777216 - 33554432): 7\n"
-    "[hist-basic-test] [33554432 - 67108864): 13\n"
-    "[hist-basic-test] [67108864 - 134217728): 20\n";
+    "[hist-basic-test] [1048575 - 2097151): 2\n"
+    "[hist-basic-test] [2097151 - 4194303): 1\n"
+    "[hist-basic-test] [4194303 - 8388607): 5\n"
+    "[hist-basic-test] [8388607 - 16777215): 6\n"
+    "[hist-basic-test] [16777215 - 33554431): 7\n"
+    "[hist-basic-test] [33554431 - 67108863): 13\n"
+    "[hist-basic-test] [67108863 - 134217727): 20\n";
 
 void ubench_test(void)
 {
