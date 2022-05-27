@@ -1,0 +1,21 @@
+name: Kernel Mode Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: make
+      working-directory: test
+    - name: Test
+      run: sudo ./run-kmod-test.sh
+      working-directory: test

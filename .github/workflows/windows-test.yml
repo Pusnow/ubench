@@ -1,0 +1,35 @@
+name: Windows Userspace Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        compiler:
+          [
+            { cc: "cl", cxx: "cl", generator: "NMake Makefiles" },
+            { cc: "clang", cxx: "clang++", generator: "NMake Makefiles" },
+            { cc: "gcc", cxx: "g++", generator: "Unix Makefiles" },
+          ]
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ matrix.compiler.cc != 'gcc' }}
+      - name: Configure CMake
+        run: cmake -G "${{ matrix.compiler.generator }}" -B ${{github.workspace}}/build -DCMAKE_C_COMPILER=${{ matrix.compiler.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cxx }}  -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} test
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{ matrix.build_type }}
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{ matrix.build_type }}

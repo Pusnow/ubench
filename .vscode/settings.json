@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.s": "riscv",
+        "*.html": "html",
+        "ubench.h": "c",
+        "printk.h": "c",
+        "kernel.h": "c",
+        "common.h": "c",
+        "module.h": "c"
+    },
+    "editor.formatOnSave": true
+}
