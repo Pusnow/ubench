@@ -11,10 +11,10 @@ A header-only simple microbenchmark library for Linux user-space, Linux kernel m
 
 ```c
 #include "ubench.h" // --- 1. Download and include `ubench.h` file.
+
 int main(){
   ubench_stat_t st; // ---- 2. Declare `ubench` struct. In this case `ubench_stat_t`.
   ubench_stat_init(&st); // ---- 3. Init `ubench` struct
-
 
   for (int i = 0; i < 1000; ++i) { // ---- 4. Repeat 1,000 times
     ubench_uint_t before = ubench_get_cycles(); // ---- 5. Retrive current cycles
