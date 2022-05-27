@@ -105,15 +105,15 @@ UBENCH_DECLARE_ALL(hist_range, const ubench_uint_t min, const ubench_uint_t n, c
 #if defined(__KERNEL__) && defined(UBENCH_GCC_LIKE)
 #include <linux/printk.h>
 #define UBENCH_PRINTF_INNER(...) pr_info(__VA_ARGS__)
-#define UBENCH_PREFIX "ubench: "
+#define UBENCH_PRINTF_PREFIX "ubench: "
 #else
 #include <stdio.h>
 #define UBENCH_PRINTF_INNER(...) printf(__VA_ARGS__)
-#define UBENCH_PREFIX ""
+#define UBENCH_PRINTF_PREFIX ""
 #endif
 
 #ifndef UBENCH_PRINTF
-#define UBENCH_PRINTF(...) UBENCH_PRINTF_INNER(UBENCH_PREFIX __VA_ARGS__)
+#define UBENCH_PRINTF(...) UBENCH_PRINTF_INNER(UBENCH_PRINTF_PREFIX __VA_ARGS__)
 #endif
 
 UBENCH_STATIC_ALWAYS_INLINE ubench_uint_t ubench_get_cycles(void)
