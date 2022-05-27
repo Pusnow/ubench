@@ -185,3 +185,31 @@ void ubench_var_add_dump_reset(const char *msg, const ubench_uint_t freq, ubench
 void ubench_hist_add_dump_reset(const char *msg, const ubench_uint_t freq, ubench_hist_t *st, const ubench_uint_t value);
 void ubench_hist_range_add_dump_reset(const char *msg, const ubench_uint_t freq, ubench_hist_range_t *st, const ubench_uint_t value);
 ```
+
+### 3. Configuration
+
+Define macros to configure `ubench`.
+
+Example:
+
+```c
+#define UBENCH_HIST_PRINT_ALL
+#include "ubench.h"
+```
+
+#### 3.1 `UBENCH_HIST_PRINT_ALL`
+
+By default, `hist` and `hist_range` do not print slots without values.
+`UBENCH_HIST_PRINT_ALL` enables printing all slots in the structs.
+
+#### 3.2 `UBENCH_HIST_PRINT_CUM`
+
+Use cumulative result for `hist` and `hist_range`.
+
+#### 3.3 `UBENCH_PREFIX` (*Not Implemented*)
+
+Change prefix of structs and functions from `ubench` to `UBENCH_PREFIX`.
+
+#### 3.4 `UBENCH_PRINTF(...)`
+
+Change printf function to print and dump.
