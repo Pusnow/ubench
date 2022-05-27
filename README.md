@@ -213,3 +213,9 @@ Change prefix of structs and functions from `ubench` to `UBENCH_PREFIX`.
 #### 3.4 `UBENCH_PRINTF(...)`
 
 Change printf function to print and dump.
+
+## TODO
+
+* Support ARM.
+* `UBENCH_PREFIX`.
+* Measure overhead of each function.
