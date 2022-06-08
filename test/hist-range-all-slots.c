@@ -1,7 +1,6 @@
 #include "common.h"
 
-void ubench_test(void)
-{
+void ubench_test(void) {
     ubench_uint_t i, min, n, d, bin;
     ubench_hist_range_t hist;
 
@@ -11,8 +10,7 @@ void ubench_test(void)
 
     ubench_hist_range_init(&hist, min, n, d);
     bin = min;
-    for (i = 0; i < 63; ++i)
-    {
+    for (i = 0; i < 63; ++i) {
         ubench_hist_range_add(&hist, bin - 1);
         ubench_hist_range_add(&hist, bin);
         ubench_hist_range_add(&hist, bin + 1);
@@ -21,8 +19,7 @@ void ubench_test(void)
     }
     UB_EXPECT_EQ(hist.counts[0], (ubench_uint_t)1);
 
-    for (i = 1; i < 63; ++i)
-    {
+    for (i = 1; i < 63; ++i) {
         UB_EXPECT_EQ(hist.counts[i], (ubench_uint_t)3);
     }
     UB_EXPECT_EQ(hist.counts[63], (ubench_uint_t)2);

@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-const char *exp_str =
+const char* exp_str =
     "[hist-all-slots-test] [0 - 1): 1\n"
     "[hist-all-slots-test] [1 - 3): 4\n"
     "[hist-all-slots-test] [3 - 7): 4\n"
@@ -67,14 +67,12 @@ const char *exp_str =
     "[hist-all-slots-test] [4611686018427387903 - 9223372036854775807): 3\n"
     "[hist-all-slots-test] [9223372036854775807 - ): 3\n";
 
-void ubench_test(void)
-{
+void ubench_test(void) {
     ubench_uint_t i;
     ubench_hist_t hist;
     ubench_hist_init(&hist);
 
-    for (i = 0; i < 64; ++i)
-    {
+    for (i = 0; i < 64; ++i) {
         ubench_hist_add(&hist, ((ubench_uint_t)1 << i) - 1);
         ubench_hist_add(&hist, (ubench_uint_t)1 << i);
         ubench_hist_add(&hist, ((ubench_uint_t)1 << i) + 1);
