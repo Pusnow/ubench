@@ -32,9 +32,37 @@ typedef unsigned long long ubench_uint_t;
 #ifndef UBENCH_SYMBOL_MODE
 #define UBENCH_STATIC_ALWAYS_INLINE UBENCH_STATIC_ALWAYS_INLINE_INNER
 #define UBENCH_STATIC_INLINE static inline
+
 #else
-#define UBENCH_STATIC_ALWAYS_INLINE
-#define UBENCH_STATIC_INLINE
+
+// Source: https://gcc.gnu.org/wiki/Visibility
+#if defined _WIN32 || defined __CYGWIN__
+#ifdef UBENCH_BUILDING_DLL
+#ifdef __GNUC__
+#define UBENCH_DLL_PUBLIC __attribute__((dllexport))
+#else
+#define UBENCH_DLL_PUBLIC __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+#endif
+#else
+#ifdef __GNUC__
+#define UBENCH_DLL_PUBLIC __attribute__((dllimport))
+#else
+#define UBENCH_DLL_PUBLIC __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
+#endif
+#endif
+#define UBENCH_DLL_LOCAL
+#else
+#if __GNUC__ >= 4
+#define UBENCH_DLL_PUBLIC __attribute__((visibility("default")))
+#define UBENCH_DLL_LOCAL __attribute__((visibility("hidden")))
+#else
+#define UBENCH_DLL_PUBLIC
+#define UBENCH_DLL_LOCAL
+#endif
+#endif
+
+#define UBENCH_STATIC_ALWAYS_INLINE UBENCH_DLL_PUBLIC
+#define UBENCH_STATIC_INLINE UBENCH_DLL_PUBLIC
 #endif
 
 #define UBENCH_DECLARE_INIT(func_name, ...) UBENCH_STATIC_ALWAYS_INLINE void ubench_##func_name##_init(ubench_##func_name##_t *s, ##__VA_ARGS__)
