@@ -1,6 +1,10 @@
 #ifndef __UBENCH_UBENCH_H
 #define __UBENCH_UBENCH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* declaration */
 
 #if defined(__GNUC__) || defined(__MINGW__) || defined(__clang__)
@@ -408,5 +412,8 @@ UBENCH_DEFINE_ADD_PRINT(hist_range, dump)
 UBENCH_DEFINE_ADD_PRINT_RESET(hist_range, dump)
 
 /* definition end */
+#endif
+#ifdef __cplusplus
+}
 #endif
 #endif
