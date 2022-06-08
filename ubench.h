@@ -106,6 +106,8 @@ struct ubench_hist_range_s
 };
 typedef struct ubench_hist_range_s ubench_hist_range_t;
 
+UBENCH_STATIC_ALWAYS_INLINE ubench_uint_t ubench_get_cycles(void);
+
 #define UBENCH_DECLARE_ALL(func_name, ...)            \
     UBENCH_DECLARE_INIT(func_name, ##__VA_ARGS__);    \
     UBENCH_DECLARE_RESET(func_name);                  \
