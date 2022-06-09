@@ -10,6 +10,8 @@ extern "C" {
 #if defined(__GNUC__) || defined(__MINGW__) || defined(__clang__)
 #define UBENCH_GCC_LIKE
 
+#define UBENCH_ALWAYS_INLINE_INNER inline __attribute__((always_inline))
+
 #define UBENCH_STATIC_ALWAYS_INLINE_INNER                                      \
     static inline __attribute__((always_inline))
 
@@ -21,6 +23,7 @@ typedef unsigned long long ubench_uint_t;
 #elif defined(_MSC_VER)
 #define UBENCH_MSC_LIKE
 
+#define UBENCH_ALWAYS_INLINE_INNER inline __forceinline
 #define UBENCH_STATIC_ALWAYS_INLINE_INNER static inline __forceinline
 
 #define UBENCH_LIKELY(x) (x)
@@ -33,12 +36,6 @@ typedef unsigned long long ubench_uint_t;
 
 typedef unsigned long long ubench_uint_t;
 #endif
-
-#ifndef UBENCH_SYMBOL_MODE
-#define UBENCH_STATIC_ALWAYS_INLINE UBENCH_STATIC_ALWAYS_INLINE_INNER
-#define UBENCH_STATIC_INLINE static inline
-
-#else
 
 // Source: https://gcc.gnu.org/wiki/Visibility
 #if defined _WIN32 || defined __CYGWIN__
@@ -69,32 +66,33 @@ typedef unsigned long long ubench_uint_t;
 #define UBENCH_DLL_LOCAL
 #endif
 #endif
+// End: https://gcc.gnu.org/wiki/Visibility
 
-#define UBENCH_STATIC_ALWAYS_INLINE UBENCH_DLL_PUBLIC
-#define UBENCH_STATIC_INLINE UBENCH_DLL_PUBLIC
+#ifndef UBENCH_SYMBOL_MODE
+#define UBENCH_C_FUNCTION UBENCH_STATIC_ALWAYS_INLINE_INNER
+#else
+#define UBENCH_C_FUNCTION UBENCH_DLL_PUBLIC
 #endif
 
 #define UBENCH_DECLARE_INIT(func_name, ...)                                    \
-    UBENCH_STATIC_ALWAYS_INLINE void ubench_##func_name##_init(                \
+    UBENCH_C_FUNCTION void ubench_##func_name##_init(                          \
         ubench_##func_name##_t* s, ##__VA_ARGS__)
 #define UBENCH_DECLARE_RESET(func_name)                                        \
-    UBENCH_STATIC_ALWAYS_INLINE void ubench_##func_name##_reset(               \
-        ubench_##func_name##_t* s)
+    UBENCH_C_FUNCTION void ubench_##func_name##_reset(ubench_##func_name##_t* s)
 #define UBENCH_DECLARE_ADD(func_name)                                          \
-    UBENCH_STATIC_ALWAYS_INLINE void ubench_##func_name##_add(                 \
-        ubench_##func_name##_t* s, const ubench_uint_t value)
+    UBENCH_C_FUNCTION void ubench_##func_name##_add(ubench_##func_name##_t* s, \
+                                                    const ubench_uint_t value)
 #define UBENCH_DECLARE_PRINT(func_name, print_name)                            \
-    UBENCH_STATIC_ALWAYS_INLINE void ubench_##func_name##_##print_name(        \
+    UBENCH_C_FUNCTION void ubench_##func_name##_##print_name(                  \
         const char* msg, ubench_##func_name##_t* s)
 #define UBENCH_DECLARE_ADD_PRINT(func_name, print_name)                        \
-    UBENCH_STATIC_ALWAYS_INLINE void ubench_##func_name##_add_##print_name(    \
+    UBENCH_C_FUNCTION void ubench_##func_name##_add_##print_name(              \
         const char* msg, const ubench_uint_t freq, ubench_##func_name##_t* s,  \
         const ubench_uint_t value)
 #define UBENCH_DECLARE_ADD_PRINT_RESET(func_name, print_name)                  \
-    UBENCH_STATIC_ALWAYS_INLINE void                                           \
-        ubench_##func_name##_add_##print_name##_reset(                         \
-            const char* msg, const ubench_uint_t freq,                         \
-            ubench_##func_name##_t* s, const ubench_uint_t value)
+    UBENCH_C_FUNCTION void ubench_##func_name##_add_##print_name##_reset(      \
+        const char* msg, const ubench_uint_t freq, ubench_##func_name##_t* s,  \
+        const ubench_uint_t value)
 
 struct ubench_stat_s {
     ubench_uint_t total;
@@ -126,7 +124,7 @@ struct ubench_hist_range_s {
 };
 typedef struct ubench_hist_range_s ubench_hist_range_t;
 
-UBENCH_STATIC_ALWAYS_INLINE ubench_uint_t ubench_get_cycles(void);
+UBENCH_C_FUNCTION ubench_uint_t ubench_get_cycles(void);
 
 #define UBENCH_DECLARE_ALL(func_name, ...)                                     \
     UBENCH_DECLARE_INIT(func_name, ##__VA_ARGS__);                             \
@@ -146,6 +144,53 @@ UBENCH_DECLARE_PRINT(var, print_double);
 UBENCH_DECLARE_ALL(hist)
 UBENCH_DECLARE_ALL(hist_range, const ubench_uint_t min, const ubench_uint_t n,
                    const ubench_uint_t d)
+
+#if defined(__cplusplus) && !defined(UBENCH_NO_CPP)
+
+namespace ubench {
+
+#ifndef UBENCH_CPP_SYMBOL_MODE
+#define UBENCH_CPP_FUNCTION UBENCH_STATIC_ALWAYS_INLINE_INNER
+#define UBENCH_CPP_METHOD UBENCH_ALWAYS_INLINE_INNER
+#else
+#define UBENCH_CPP_FUNCTION UBENCH_DLL_PUBLIC
+#define UBENCH_CPP_METHOD UBENCH_DLL_PUBLIC
+#endif
+
+UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
+
+#define UBENCH_CPP_DECLARE_INIT(func_name, ...) func_name(__VA_ARGS__)
+#define UBENCH_CPP_DECLARE_RESET() reset()
+#define UBENCH_CPP_DECLARE_ADD() add(const ubench_uint_t value)
+#define UBENCH_CPP_DECLARE_PRINT(print_name) print_name(const char* msg)
+#define UBENCH_CPP_DECLARE_ADD_PRINT(print_name)                               \
+    add_##print_name(const char* msg, const ubench_uint_t freq,                \
+                     const ubench_uint_t value)
+#define UBENCH_CPP_DECLARE_ADD_PRINT_RESET(print_name)                         \
+    add_##print_name##_reset(const char* msg, const ubench_uint_t freq,        \
+                             const ubench_uint_t value)
+
+#define UBENCH_DECLARE_CLASS(func_name, ...)                                   \
+    struct func_name : public ubench_##func_name##_t {                         \
+        UBENCH_CPP_DECLARE_INIT(func_name, __VA_ARGS__);                       \
+        void UBENCH_CPP_DECLARE_RESET();                                       \
+        void UBENCH_CPP_DECLARE_ADD();                                         \
+        void UBENCH_CPP_DECLARE_PRINT(print);                                  \
+        void UBENCH_CPP_DECLARE_ADD_PRINT(print);                              \
+        void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(print);                        \
+        void UBENCH_CPP_DECLARE_PRINT(dump);                                   \
+        void UBENCH_CPP_DECLARE_ADD_PRINT(dump);                               \
+        void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(dump);                         \
+    };
+UBENCH_DECLARE_CLASS(stat);
+UBENCH_DECLARE_CLASS(var);
+UBENCH_DECLARE_CLASS(hist);
+UBENCH_DECLARE_CLASS(hist_range, const ubench_uint_t min, const ubench_uint_t n,
+                     const ubench_uint_t d);
+
+} // namespace ubench
+
+#endif
 
 /* declaration end */
 
@@ -167,7 +212,7 @@ UBENCH_DECLARE_ALL(hist_range, const ubench_uint_t min, const ubench_uint_t n,
 #define UBENCH_PRINTF(...) UBENCH_PRINTF_INNER(UBENCH_PRINTF_PREFIX __VA_ARGS__)
 #endif
 
-UBENCH_STATIC_ALWAYS_INLINE ubench_uint_t ubench_get_cycles(void) {
+UBENCH_C_FUNCTION ubench_uint_t ubench_get_cycles(void) {
 #if defined(UBENCH_GCC_LIKE) && defined(__x86_64__)
     return __builtin_ia32_rdtsc();
 #elif defined(UBENCH_MSC_LIKE)
@@ -413,6 +458,55 @@ UBENCH_DEFINE_ADD_PRINT_RESET(hist_range, dump)
 
 /* definition end */
 #endif
+
+#if defined(__cplusplus) && !defined(UBENCH_NO_CPP) &&                         \
+    !defined(UBENCH_CPP_NO_DEFINITION)
+
+namespace ubench {
+#define UBENCH_DEFINE_CLASS(func_name, ...)                                    \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_RESET() {             \
+        ubench_##func_name##_reset(this);                                      \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_ADD() {               \
+        ubench_##func_name##_add(this, value);                                 \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_PRINT(print) {        \
+        ubench_##func_name##_print(msg, this);                                 \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_ADD_PRINT(print) {    \
+        ubench_##func_name##_add_print(msg, freq, this, value);                \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_ADD_PRINT_RESET(      \
+        print) {                                                               \
+        ubench_##func_name##_add_print_reset(msg, freq, this, value);          \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_PRINT(dump) {         \
+        ubench_##func_name##_dump(msg, this);                                  \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_ADD_PRINT(dump) {     \
+        ubench_##func_name##_add_dump(msg, freq, this, value);                 \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_ADD_PRINT_RESET(      \
+        dump) {                                                                \
+        ubench_##func_name##_add_dump_reset(msg, freq, this, value);           \
+    }
+UBENCH_DEFINE_CLASS(stat);
+UBENCH_CPP_METHOD stat::stat() { ubench_stat_init(this); }
+UBENCH_DEFINE_CLASS(var);
+UBENCH_CPP_METHOD var::var() { ubench_var_init(this); }
+UBENCH_DEFINE_CLASS(hist);
+UBENCH_CPP_METHOD hist::hist() { ubench_hist_init(this); }
+UBENCH_DEFINE_CLASS(hist_range);
+UBENCH_CPP_METHOD hist_range::hist_range(const ubench_uint_t min,
+                                         const ubench_uint_t n,
+                                         const ubench_uint_t d) {
+    ubench_hist_range_init(this, min, n, d);
+}
+
+} // namespace ubench
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif
