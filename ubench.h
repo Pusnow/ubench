@@ -156,10 +156,16 @@ namespace ubench {
 #define UBENCH_CPP_METHOD UBENCH_DLL_PUBLIC
 #endif
 
+#if __cplusplus >= 201103L
+#define UBENCH_NOEXCEPT noexcept
+#else
+#define UBENCH_NOEXCEPT
+#endif
+
 UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
 
-#define UBENCH_CPP_DECLARE_RESET() reset()
-#define UBENCH_CPP_DECLARE_ADD() add(const ubench_uint_t value)
+#define UBENCH_CPP_DECLARE_RESET() reset() UBENCH_NOEXCEPT
+#define UBENCH_CPP_DECLARE_ADD() add(const ubench_uint_t value) UBENCH_NOEXCEPT
 #define UBENCH_CPP_DECLARE_PRINT(print_name) print_name(const char* msg)
 #define UBENCH_CPP_DECLARE_ADD_PRINT(print_name)                               \
     add_##print_name(const char* msg, const ubench_uint_t freq,                \
@@ -170,7 +176,7 @@ UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
 
 #define UBENCH_DECLARE_CLASS(func_name, ...)                                   \
     struct func_name : public ubench_##func_name##_t {                         \
-        UBENCH_CPP_METHOD func_name(__VA_ARGS__);                              \
+        UBENCH_CPP_METHOD func_name(__VA_ARGS__) UBENCH_NOEXCEPT;              \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_RESET();                     \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD();                       \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_PRINT(print);                \
@@ -503,15 +509,15 @@ UBENCH_CPP_FUNCTION ubench_uint_t get_cycles() { return ubench_get_cycles(); }
     }
 
 UBENCH_DEFINE_CLASS(stat);
-UBENCH_CPP_METHOD stat::stat() { ubench_stat_init(this); }
+UBENCH_CPP_METHOD stat::stat() UBENCH_NOEXCEPT { ubench_stat_init(this); }
 UBENCH_DEFINE_CLASS(var);
-UBENCH_CPP_METHOD var::var() { ubench_var_init(this); }
+UBENCH_CPP_METHOD var::var() UBENCH_NOEXCEPT { ubench_var_init(this); }
 UBENCH_DEFINE_CLASS(hist);
-UBENCH_CPP_METHOD hist::hist() { ubench_hist_init(this); }
+UBENCH_CPP_METHOD hist::hist() UBENCH_NOEXCEPT { ubench_hist_init(this); }
 UBENCH_DEFINE_CLASS(hist_range);
-UBENCH_CPP_METHOD hist_range::hist_range(const ubench_uint_t min,
-                                         const ubench_uint_t n,
-                                         const ubench_uint_t d) {
+UBENCH_CPP_METHOD
+hist_range::hist_range(const ubench_uint_t min, const ubench_uint_t n,
+                       const ubench_uint_t d) UBENCH_NOEXCEPT {
     ubench_hist_range_init(this, min, n, d);
 }
 
