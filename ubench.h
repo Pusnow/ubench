@@ -158,7 +158,6 @@ namespace ubench {
 
 UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
 
-#define UBENCH_CPP_DECLARE_INIT(func_name, ...) func_name(__VA_ARGS__)
 #define UBENCH_CPP_DECLARE_RESET() reset()
 #define UBENCH_CPP_DECLARE_ADD() add(const ubench_uint_t value)
 #define UBENCH_CPP_DECLARE_PRINT(print_name) print_name(const char* msg)
@@ -171,7 +170,7 @@ UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
 
 #define UBENCH_DECLARE_CLASS(func_name, ...)                                   \
     struct func_name : public ubench_##func_name##_t {                         \
-        UBENCH_CPP_METHOD UBENCH_CPP_DECLARE_INIT(func_name, __VA_ARGS__);     \
+        UBENCH_CPP_METHOD func_name(__VA_ARGS__);                              \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_RESET();                     \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD();                       \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_PRINT(print);                \
