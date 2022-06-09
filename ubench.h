@@ -172,15 +172,15 @@ UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
 
 #define UBENCH_DECLARE_CLASS(func_name, ...)                                   \
     struct func_name : public ubench_##func_name##_t {                         \
-        UBENCH_CPP_DECLARE_INIT(func_name, __VA_ARGS__);                       \
-        void UBENCH_CPP_DECLARE_RESET();                                       \
-        void UBENCH_CPP_DECLARE_ADD();                                         \
-        void UBENCH_CPP_DECLARE_PRINT(print);                                  \
-        void UBENCH_CPP_DECLARE_ADD_PRINT(print);                              \
-        void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(print);                        \
-        void UBENCH_CPP_DECLARE_PRINT(dump);                                   \
-        void UBENCH_CPP_DECLARE_ADD_PRINT(dump);                               \
-        void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(dump);                         \
+        UBENCH_CPP_METHOD UBENCH_CPP_DECLARE_INIT(func_name, __VA_ARGS__);     \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_RESET();                     \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD();                       \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_PRINT(print);                \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD_PRINT(print);            \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(print);      \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_PRINT(dump);                 \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD_PRINT(dump);             \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(dump);       \
     };
 UBENCH_DECLARE_CLASS(stat);
 UBENCH_DECLARE_CLASS(var);
@@ -463,6 +463,9 @@ UBENCH_DEFINE_ADD_PRINT_RESET(hist_range, dump)
     !defined(UBENCH_CPP_NO_DEFINITION)
 
 namespace ubench {
+
+UBENCH_CPP_FUNCTION ubench_uint_t get_cycles() { return ubench_get_cycles(); }
+
 #define UBENCH_DEFINE_CLASS(func_name, ...)                                    \
     UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_RESET() {             \
         ubench_##func_name##_reset(this);                                      \
