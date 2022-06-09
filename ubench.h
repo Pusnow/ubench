@@ -135,12 +135,11 @@ UBENCH_C_FUNCTION ubench_uint_t ubench_get_cycles(void);
     UBENCH_DECLARE_ADD_PRINT_RESET(func_name, print);                          \
     UBENCH_DECLARE_PRINT(func_name, dump);                                     \
     UBENCH_DECLARE_ADD_PRINT(func_name, dump);                                 \
-    UBENCH_DECLARE_ADD_PRINT_RESET(func_name, dump);
+    UBENCH_DECLARE_ADD_PRINT_RESET(func_name, dump);                           \
+    UBENCH_DECLARE_PRINT(func_name, print_double);
 
 UBENCH_DECLARE_ALL(stat)
-UBENCH_DECLARE_PRINT(stat, print_double);
 UBENCH_DECLARE_ALL(var)
-UBENCH_DECLARE_PRINT(var, print_double);
 UBENCH_DECLARE_ALL(hist)
 UBENCH_DECLARE_ALL(hist_range, const ubench_uint_t min, const ubench_uint_t n,
                    const ubench_uint_t d)
@@ -181,6 +180,7 @@ UBENCH_CPP_FUNCTION ubench_uint_t get_cycles();
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_PRINT(dump);                 \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD_PRINT(dump);             \
         UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_ADD_PRINT_RESET(dump);       \
+        UBENCH_CPP_METHOD void UBENCH_CPP_DECLARE_PRINT(print_double);         \
     };
 UBENCH_DECLARE_CLASS(stat);
 UBENCH_DECLARE_CLASS(var);
@@ -365,6 +365,8 @@ UBENCH_DECLARE_PRINT(hist, print) {
                       ((ubench_uint_t)1 << i) - 1, cum + s->counts[i]);
 }
 
+UBENCH_DECLARE_PRINT(hist, print_double) { ubench_hist_print(msg, s); }
+
 UBENCH_DECLARE_PRINT(hist, dump) {
     ubench_uint_t i = 1;
     UBENCH_PRINTF("[%s] count: %lld", msg, s->counts[0]);
@@ -439,6 +441,10 @@ UBENCH_DECLARE_PRINT(hist_range, print) {
                       cum + s->counts[UBENCH_HIST_LEVEL - 1]);
 }
 
+UBENCH_DECLARE_PRINT(hist_range, print_double) {
+    ubench_hist_range_print(msg, s);
+}
+
 UBENCH_DECLARE_PRINT(hist_range, dump) {
     ubench_uint_t i;
     UBENCH_PRINTF("[%s] key: 0", msg);
@@ -492,7 +498,11 @@ UBENCH_CPP_FUNCTION ubench_uint_t get_cycles() { return ubench_get_cycles(); }
     UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_ADD_PRINT_RESET(      \
         dump) {                                                                \
         ubench_##func_name##_add_dump_reset(msg, freq, this, value);           \
+    }                                                                          \
+    UBENCH_CPP_METHOD void func_name::UBENCH_CPP_DECLARE_PRINT(print_double) { \
+        ubench_##func_name##_print_double(msg, this);                          \
     }
+
 UBENCH_DEFINE_CLASS(stat);
 UBENCH_CPP_METHOD stat::stat() { ubench_stat_init(this); }
 UBENCH_DEFINE_CLASS(var);
