@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#define UBENCH_SYMBOL_MODE
+#define UBENCH_CPP_SYMBOL_MODE
 #include "../../ubench.h"
 
 #define STRINGIFY(x) #x
@@ -31,11 +31,9 @@ PYBIND11_MODULE(ubench, m) {
            ubench_get_cycles
     )pbdoc";
 
-    m.def("ubench_get_cycles", &ubench_get_cycles);
+    m.def("get_cycles", &ubench_get_cycles);
     ADD_DEFS_ALL(stat);
-    // ADD_DEFS_ALL_DOUBLE(stat);
     ADD_DEFS_ALL(var);
-    // ADD_DEFS_ALL_DOUBLE(var);
     ADD_DEFS_ALL(hist);
     ADD_DEFS_ALL(hist_range, const ubench_uint_t, const ubench_uint_t,
                  const ubench_uint_t);
