@@ -18,7 +18,8 @@ namespace py = pybind11;
         .def("add_print_reset", &ubench::func_name::add_print_reset)           \
         .def("dump", &ubench::func_name::dump)                                 \
         .def("add_dump", &ubench::func_name::add_dump)                         \
-        .def("add_dump_reset", &ubench::func_name::add_dump_reset);
+        .def("add_dump_reset", &ubench::func_name::add_dump_reset)             \
+        .def("print_double", &ubench::func_name::print_double);
 
 PYBIND11_MODULE(ubench, m) {
     m.doc() = R"pbdoc(
