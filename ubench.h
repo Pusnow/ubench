@@ -332,7 +332,7 @@ UBENCH_DEFINE_ADD_PRINT(var, dump)
 UBENCH_DEFINE_ADD_PRINT_RESET(var, dump)
 
 UBENCH_DECLARE_RESET(hist) {
-    int i = 0;
+    unsigned int i = 0;
     s->total = 0;
     for (; i < UBENCH_HIST_LEVEL; ++i) {
         s->counts[i] = 0;
@@ -387,7 +387,7 @@ UBENCH_DEFINE_ADD_PRINT(hist, dump)
 UBENCH_DEFINE_ADD_PRINT_RESET(hist, dump)
 
 UBENCH_DECLARE_RESET(hist_range) {
-    int i = 0;
+    unsigned int i = 0;
     s->total = 0;
     for (; i < UBENCH_HIST_LEVEL; ++i) {
         s->counts[i] = 0;
@@ -396,7 +396,7 @@ UBENCH_DECLARE_RESET(hist_range) {
 
 UBENCH_DECLARE_INIT(hist_range, const ubench_uint_t min, const ubench_uint_t n,
                     const ubench_uint_t d) {
-    int i = 1;
+    unsigned int i = 1;
     s->keys[0] = min;
     for (; i < UBENCH_HIST_LEVEL - 1; ++i) {
         s->keys[i] = (s->keys[i - 1] * n) / d;
