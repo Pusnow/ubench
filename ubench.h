@@ -226,6 +226,8 @@ UBENCH_C_FUNCTION ubench_uint_t ubench_get_cycles(void) {
     ubench_uint_t t = 0;
     asm volatile("mrs %0, cntvct_el0" : "=r"(t));
     return t;
+#elif defined(UBENCH_GCC_LIKE)
+    return __builtin_readcyclecounter();
 #else
 #error "Unsupported platform"
 #endif
