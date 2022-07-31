@@ -222,6 +222,10 @@ UBENCH_C_FUNCTION ubench_uint_t ubench_get_cycles(void) {
     return __builtin_ia32_rdtsc();
 #elif defined(UBENCH_MSC_LIKE)
     return __rdtsc();
+#elif defined(UBENCH_GCC_LIKE) && defined(__aarch64__) && defined(__APPLE__)
+    ubench_uint_t t = 0;
+    asm volatile("mrs %0, cntvct_el0" : "=r"(t));
+    return t;
 #else
 #error "Unsupported platform"
 #endif
